@@ -1,6 +1,10 @@
 const express = require("express");
 const app = express();
 
+const mineflayer = require("mineflayer");
+const config = require("./config.json");
+
+// ===== WEB SERVER (REQUIRED FOR RENDER) =====
 const PORT = process.env.PORT || 3000;
 
 app.get("/", (req, res) => {
@@ -10,26 +14,25 @@ app.get("/", (req, res) => {
 app.listen(PORT, "0.0.0.0", () => {
   console.log("Web server running on port " + PORT);
 });
-const mineflayer = require('mineflayer');
-const config = require('./config.json');
+
+// ===== MINECRAFT BOT =====
 
 const bot = mineflayer.createBot({
   host: config.serverHost,
   port: config.serverPort,
   username: config.botUsername,
-  auth: 'offline',
+  auth: "offline",
   version: false,
   viewDistance: config.botChunk
 });
 
 let movementPhase = 0;
 const STEP_INTERVAL = 1500;
-const STEP_SPEED    = 1;
 const JUMP_DURATION = 500;
 
-bot.on('spawn', () => {
+bot.on("spawn", () => {
   setTimeout(() => {
-    bot.setControlState('sneak', true);
+    bot.setControlState("sneak", true);
     console.log(`✅ ${config.botUsername} is Ready!`);
   }, 3000);
 
@@ -41,28 +44,31 @@ function movementCycle() {
 
   switch (movementPhase) {
     case 0:
-      bot.setControlState('forward', true);
-      bot.setControlState('back', false);
-      bot.setControlState('jump', false);
+      bot.setControlState("forward", true);
+      bot.setControlState("back", false);
+      bot.setControlState("jump", false);
       break;
+
     case 1:
-      bot.setControlState('forward', false);
-      bot.setControlState('back', true);
-      bot.setControlState('jump', false);
+      bot.setControlState("forward", false);
+      bot.setControlState("back", true);
+      bot.setControlState("jump", false);
       break;
+
     case 2:
-      bot.setControlState('forward', false);
-      bot.setControlState('back', false);
-      bot.setControlState('jump', true);
+      bot.setControlState("forward", false);
+      bot.setControlState("back", false);
+      bot.setControlState("jump", true);
+
       setTimeout(() => {
-        bot.setControlState('jump', false);
+        bot.setControlState("jump", false);
       }, JUMP_DURATION);
       break;
+
     case 3:
-      bot.setControlState('forward', false);
-      bot.setControlState('back', false);
-      bot.setControlState('jump', false);
-      console.log('– Bekleme aşıaması (iniş tamamlandı)');
+      bot.setControlState("forward", false);
+      bot.setControlState("back", false);
+      bot.setControlState("jump", false);
       break;
   }
 
@@ -71,9 +77,10 @@ function movementCycle() {
   setTimeout(movementCycle, STEP_INTERVAL);
 }
 
-bot.on('error', (err) => {
-  console.error('⚠️ Error:', err);
+bot.on("error", (err) => {
+  console.error("⚠️ Error:", err);
 });
-bot.on('end', () => {
-  console.log('⛔️ Bot Disconnected!');
+
+bot.on("end", () => {
+  console.log("⛔ Bot Disconnected!");
 });
