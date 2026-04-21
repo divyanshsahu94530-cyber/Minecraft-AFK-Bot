@@ -1,3 +1,15 @@
+const express = require("express");
+const app = express();
+
+const PORT = process.env.PORT || 3000;
+
+app.get("/", (req, res) => {
+  res.send("Minecraft bot running ✅");
+});
+
+app.listen(PORT, "0.0.0.0", () => {
+  console.log("Web server running on port " + PORT);
+});
 const mineflayer = require('mineflayer');
 const config = require('./config.json');
 
